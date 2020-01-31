@@ -1,8 +1,10 @@
 package java.Columnar;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  *                         Root
@@ -24,20 +26,30 @@ import java.util.List;
  * |===================|          |===================|
  *      
  */
-public class ColumnTree
+public class ColumnTree implements Serializable
 {
-    private static final String ROOT = "ROOT"; 
+    /**
+     *
+     */
+    private static final long serialVersionUID = -5112723822695853720L;
+
+    private static final String ROOT = "ROOT";
 
     private List<Node> nodes;
-    private Iterator<Node> iter;
+    private ListIterator<Node> iter;
+    private Node rootNode;
+
+    private int currentIndex = 0;
 
     public ColumnTree(Object parent, Object key, Object value) {
         /**
          * Build Default Root in Column Trees
          */
         nodes = new ArrayList<>();
+        iter = nodes.listIterator(currentIndex);
+
         KV rootKv = new KV("left", "right");
-        Node rootNode = new Node(ROOT, rootKv);
+        rootNode = new Node(ROOT, rootKv);
         nodes.add(rootNode);
     }
 
@@ -48,6 +60,8 @@ public class ColumnTree
         KV newKV = new KV(key, value);
         Node newNode = new Node(parent, newKV);
         nodes.add(newNode);
+
+        currentIndex++;
     }
 
     /**
@@ -67,13 +81,14 @@ public class ColumnTree
                 newList.remove(newKV);
             }
         }
+
+        --currentIndex;
     }
 
     /**
      * get cloumn parent mapping data
      */
     public List<KV> getParentListKV(Object parent) {
-        iter = nodes.iterator();
         Node iterNode;
 
         while (iter.hasNext()) {
@@ -109,7 +124,6 @@ public class ColumnTree
      * compare cloumn parent
      */
     public boolean contains(Object parent) {
-        iter = nodes.iterator();
         while (iter.hasNext()) {
             if (iter.next().getParent() == parent)
                 return true;
@@ -118,12 +132,26 @@ public class ColumnTree
         return false;
     }
 
-    /**
-     * get cloumn iterator
-     */
-    public Iterator<Node> getNodeIterator() {
-        return iter;
+    public Node previous() {
+        return iter.previous();
     }
+
+    public Node first() {
+        return rootNode;
+    }
+
+    public Node next() {
+        return iter.next();
+    }
+
+    public List<KV> last() {
+        return nodes.get(currentIndex++).getKVList();
+    }
+
+    /**
+     * override
+     */
+    public void toDisk() {}
 
     /**
      * size of from Cloumn in list(s)
@@ -145,8 +173,12 @@ public class ColumnTree
      * |  key            value    |
      * |==========================|           
      */
-    private class Node
+    private class Node implements Serializable
     {
+        /**
+         *
+         */
+        private static final long serialVersionUID = 8981824497079873861L;
         Object parent;
         List<KV> kv;
 
@@ -179,8 +211,12 @@ public class ColumnTree
      *  [index] <=>  [index]
      * =========================
      */
-    public class KV
+    public class KV implements Serializable
     {
+        /**
+         *
+         */
+        private static final long serialVersionUID = -2956614816449059957L;
         Object left;
         Object right;
 
