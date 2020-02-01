@@ -1,2 +1,2 @@
 # QueryCD
-Columnar Databases
+Columnar Store
