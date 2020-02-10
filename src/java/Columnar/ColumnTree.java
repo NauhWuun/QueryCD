@@ -26,13 +26,8 @@ import java.util.ListIterator;
  * |===================|          |===================|
  *      
  */
-public class ColumnTree implements Serializable
+public class ColumnTree
 {
-    /**
-     *
-     */
-    private static final long serialVersionUID = -5112723822695853720L;
-
     private static final String ROOT = "ROOT";
 
     private List<Node> nodes;
@@ -152,6 +147,7 @@ public class ColumnTree implements Serializable
      * override
      */
     public void toDisk() {}
+    public void loadIn() {}
 
     /**
      * size of from Cloumn in list(s)
@@ -173,12 +169,8 @@ public class ColumnTree implements Serializable
      * |  key            value    |
      * |==========================|           
      */
-    private class Node implements Serializable
+    private class Node
     {
-        /**
-         *
-         */
-        private static final long serialVersionUID = 8981824497079873861L;
         Object parent;
         List<KV> kv;
 
