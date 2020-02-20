@@ -2,59 +2,42 @@ package java.Columnar;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
-/**
- *                         Root
- *                          ↓
- *  ====================================================
- *          |                               |   
- *  [Node|Node|Node|...]          [Node|Node|Node|...]
- *    |     |   |    |              |    |    |    |
- *  ====================================================
- *          |                               |
- *       Parents                         Parents        
- * |===================|          |===================|
- * |      Parent       |          |      Parent       | 
- * | ------------------|          | ------------------| 
- * |   |        |      |          |   |        |      |
- * |  Left     right   |          |  Left     right   |
- * |   |        |      |          |   |        |      |
- * |  key      value   |          |  key      value   |
- * |===================|          |===================|
- *      
- */
-public class ColumnTree
+public class ColumnTree 
 {
     private static final String ROOT = "ROOT";
 
-    private List<Node> nodes;
-    private ListIterator<Node> iter;
     private Node rootNode;
-
     private int currentIndex = 0;
 
-    public ColumnTree(Object parent, Object key, Object value) {
+    private static Map<Object, Object> kvMaps = new IdentityHashMap<>();
+    private static final Map<Object, KV> kvNodes = new ConcurrentHashMap<>();
+
+    public ColumnTree() { 
         /**
          * Build Default Root in Column Trees
          */
-        nodes = new ArrayList<>();
-        iter = nodes.listIterator(currentIndex);
-
-        KV rootKv = new KV("left", "right");
+        KV rootKv = new KV(ROOT, "left", "right");
         rootNode = new Node(ROOT, rootKv);
-        nodes.add(rootNode);
+
+        kvMaps.put("left", "right");
+        kvNodes.put(rootKv, rootKv);
     }
 
     /**
      * addtion new cloumn data(s)
      */
     public void add(Object parent, Object key, Object value) {
-        KV newKV = new KV(key, value);
-        Node newNode = new Node(parent, newKV);
-        nodes.add(newNode);
+        kvMaps.put(key, value);
+        KV newKV = new KV(parent, key, value);
+
+        kvNodes.put(parent, newKV);
 
         currentIndex++;
     }
@@ -63,19 +46,8 @@ public class ColumnTree
      * delete cloumn data, params(Column Name/Mapping Key)
      */
     public void delete(Object parent, Object key) {
-        List<KV> newList = getParentListKV(parent);
-        if (newList == null)
-            return;
-
-        Iterator<KV> iter = newList.iterator();
-        KV newKV;
-
-        while (iter.hasNext()) {
-            newKV = iter.next();
-            if (newKV.getLeft() == key) {
-                newList.remove(newKV);
-            }
-        }
+        kvMaps.remove(key);
+        kvNodes.remove(parent);
 
         --currentIndex;
     }
@@ -84,67 +56,81 @@ public class ColumnTree
      * get cloumn parent mapping data
      */
     public List<KV> getParentListKV(Object parent) {
-        Node iterNode;
+        List<KV> newList = new ArrayList<>();
 
-        while (iter.hasNext()) {
-            iterNode = iter.next();
-            if (iterNode.getParent() == parent)
-                return iterNode.getKVList();
-        }
+        Set<Entry<Object, KV>> entry = kvNodes.entrySet();
+        entry.parallelStream().forEach(action -> {
+            if (action.getKey().equals(parent))
+                newList.add(action.getValue());
+        });
 
-        return null;
+        return newList;
     }
 
     /**
      * get cloumn parent mapping value form mapping key
      */
-    public Object getValue(Object parent, Object key) {
-        List<KV> newList = getParentListKV(parent);
-        if (newList == null)
-            return null;
-
-        Iterator<KV> iter = newList.iterator();
-        KV newKV;
-
-        while (iter.hasNext()) {
-            newKV = iter.next();
-            if (newKV.getLeft() == key)
-                return newKV.getRight();
-        }
-
-        return null;
+    public Object getValueWithParentAndParent(Object parent, Object key) {
+        return getParentListKV(parent).parallelStream().filter(
+            action -> action.getLeft().equals(key))
+                .findFirst().map(
+                    action -> action.getRight()
+                )
+                .orElse(null);
     }
 
-    /**
-     * compare cloumn parent
-     */
+    public Object getValueWithKey(Object key) {
+        return kvMaps.get(key);
+    }
+
+    public List<Object> getValues() {
+        return new ArrayList<>(kvMaps.values());
+    }
+
+    public Object getParentWithKey(Object key) {
+        return kvNodes.values().parallelStream().filter(
+            predicate -> predicate.getLeft().equals(key))
+                .findFirst().map(
+                    mapper -> mapper.getParent()
+                )
+                .orElse(null);
+    }
+
+    public Object getParentWithValue(Object value) {
+        return kvNodes.values().parallelStream().filter(
+            predicate -> predicate.getRight().equals(value))
+                .findFirst().map(
+                    mapper -> mapper.getParent()
+                )
+                .orElse(null);
+    }
+
+    public List<Object> getParent() {
+        return new ArrayList<>(kvNodes.keySet());
+    }
+
     public boolean contains(Object parent) {
-        while (iter.hasNext()) {
-            if (iter.next().getParent() == parent)
-                return true;
-        }
-
-        return false;
+        return kvNodes.containsKey(parent);
     }
 
-    public Node previous() {
-        return iter.previous();
+    public Object previous() {
+        return getParent().listIterator().previous();
     }
 
-    public Node first() {
+    public Object first() {
         return rootNode;
     }
 
-    public Node next() {
-        return iter.next();
+    public Object next() {
+        return getParent().listIterator().next();
     }
 
-    public List<KV> last() {
-        return nodes.get(currentIndex++).getKVList();
+    public Object last() {
+        return getParent().get(currentIndex++);
     }
 
     /**
-     * override
+     * Override This
      */
     public void toDisk() {}
     public void loadIn() {}
@@ -153,7 +139,7 @@ public class ColumnTree
      * size of from Cloumn in list(s)
      */
     public int size() {
-        return nodes.size();
+        return kvNodes.size();
     }
 
     /**         
@@ -169,29 +155,28 @@ public class ColumnTree
      * |  key            value    |
      * |==========================|           
      */
-    private class Node
+    private static class Node
     {
         Object parent;
-        List<KV> kv;
 
         public Node(Object parent, KV kv) {
             this.parent = parent;
-            this.kv = new ArrayList<>();
-            this.kv.add(kv);
+            kvNodes.put(parent, kv);
         }
 
-        public Object getParent() {
+        public final Object getParent() {
             return parent;
         }
 
-        public List<KV> getKVList() {
-            return kv;
+        public final KV getParentKV(final Object parent) {
+            return kvNodes.get(parent);
         }
     }
 
     /**
      *        Mapping
      *           ↓
+     *         Parent
      *    ↓             ↓
      * =========================
      *   Name   <=>   Result
@@ -209,20 +194,29 @@ public class ColumnTree
          *
          */
         private static final long serialVersionUID = -2956614816449059957L;
+
         Object left;
         Object right;
+        Object parent;
 
-        public KV(Object left, Object right) {
+        public KV(final Object parent, final Object left, final Object right) {
             this.left = left;
             this.right = right;
+            this.parent = parent;
+
+            kvMaps.put(left, right);
         }
 
-        public Object getLeft() {
+        public final Object getLeft() {
             return left;
         }
 
-        public Object getRight() {
+        public final Object getRight() {
             return right;
+        }
+
+        public final Object getParent() {
+            return parent;
         }
     }
 }
