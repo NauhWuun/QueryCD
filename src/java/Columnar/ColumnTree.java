@@ -70,7 +70,7 @@ public class ColumnTree
     /**
      * get cloumn parent mapping value form mapping key
      */
-    public Object getValueWithParentAndParent(Object parent, Object key) {
+    public Object getValueWithParentAndKey(Object parent, Object key) {
         return getParentListKV(parent).parallelStream().filter(
             action -> action.getLeft().equals(key))
                 .findFirst().map(
