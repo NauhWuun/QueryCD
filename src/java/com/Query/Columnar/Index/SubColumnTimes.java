@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public final class SubColumnTimes
+public final class SubColumnTimes implements Serializable
 {
     private AtomicInteger createTimeIndex, updateTimeIndex;
     private Map<Object, TimeKValue<Object, Object>> innerData;
@@ -68,8 +68,6 @@ public final class SubColumnTimes
 
     public class TimeKValue<K, V> implements Serializable
     {
-        private static final long serialVersionUID = 1L;
-
         private K left;
         private V right;
 
