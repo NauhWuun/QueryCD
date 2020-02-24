@@ -5,7 +5,7 @@
     <artifactId>QueryCD</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <description>QueryCD - used Multi-Trees Algorithm Implement Columnar Data-Model. LightWeight/Tiny/Easy/Non-limit/Fast/and... ?.</description>
+    <description>QueryCD - LightWeight/Tiny/Easy/Non-limit/Fast/and... ?.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
