@@ -1,11 +1,9 @@
-package com.Query.Columnar.Index;
-
-import com.Query.Columnar.BloomFilter;
+package org.Query.Columnar;
 
 public final class Globalndex<K, V>
 {
-    private BloomFilter keyIndex;
-    private BloomFilter valueIndex;
+    private final BloomFilter keyIndex;
+    private final BloomFilter valueIndex;
 
     public Globalndex() {
         keyIndex = new BloomFilter();

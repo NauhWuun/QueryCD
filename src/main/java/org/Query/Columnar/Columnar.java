@@ -1,31 +1,30 @@
-package com.Query.Columnar;
-
-import com.Query.Columnar.Index.ColumnTreeIndex;
-import com.Query.Columnar.Index.Globalndex;
+package org.Query.Columnar;
 
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class Columns
+public class Columnar
 {
-    private static final Columns colTree = new Columns();
     private static final Map<String, SubColumn> columnMaps = new ConcurrentHashMap<>();
-    private static final ColumnTreeIndex<String> columnIndex = new ColumnTreeIndex<String>(colTree.getKeys());
+    private static final ColumnTreeIndex<String> columnIndex = new ColumnTreeIndex<>(getKeys());
 
-    private Globalndex<Object, Object> columnFilter;
+    private final Globalndex<Object, Object> columnFilter;
 
-    private Columns() {
-        columnFilter = new Globalndex<>();
-    }
+    public Columnar() { columnFilter = new Globalndex<>(); }
 
-    public void createColumnFamily(final String newColumnName, final Object key, final Object value) throws ParseException {
-        columnMaps.put(newColumnName, new SubColumn(newColumnName).addChildTreeData(key, value));
-        columnFilter.pushKeyIndexData(key).pushValueIndexData(value);
+    public void createColumnFamily(final String newColumnName) throws ParseException {
+        if (columnMaps.containsKey(newColumnName))
+            return;
+
+        columnMaps.put(newColumnName, new SubColumn(newColumnName));
     }
 
     public void addtionColumnDatas(final String columnName, final Object key, final Object value) throws ParseException {
+        if (! columnMaps.containsKey(columnName))
+            return;
+
         columnMaps.get(columnName).addChildTreeData(key, value);
 
         if (! columnFilter.ContainsKey(key) && ! columnFilter.ContainsValue(value))
@@ -33,18 +32,27 @@ public class Columns
     }
 
     public void delete(String columnName) {
+        if (! columnMaps.containsKey(columnName))
+            return;
+
         columnMaps.remove(columnName);
     }
 
     public void lazyRemoveChildTreeData(final String columnName, final Object key) throws ParseException {
+        if (! columnMaps.containsKey(columnName))
+            return;
+
         columnMaps.get(columnName).lazyChildTreeData(key);
     }
 
-    public void removeColumnDatas(final String columnName, final Object key) throws ParseException {
+    public void removeColumnData(final String columnName, final Object key) throws ParseException {
+        if (! columnMaps.containsKey(columnName))
+            return;
+
         columnMaps.get(columnName).removeChildTreeData(key);
     }
 
-    public SubColumn getOnlySubTree(String columnName) {
+    public SubColumn getSubColumn(String columnName) {
         return columnMaps.get(columnName);
     }
 
@@ -68,14 +76,12 @@ public class Columns
         return returnValue[0];
     }
 
-    public List<Object> getValues() {
-        return columnMaps.values().parallelStream()
-                .collect(Collectors.toList());
+    public static List<Object> getValues() {
+        return columnMaps.values().parallelStream().collect(Collectors.toList());
     }
 
-    public List<String> getKeys() {
-        return columnMaps.keySet().parallelStream()
-                .collect(Collectors.toList());
+    public static List<String> getKeys() {
+        return columnMaps.keySet().parallelStream().collect(Collectors.toList());
     }
 
     public boolean contains(String columnName) {
@@ -84,10 +90,6 @@ public class Columns
 
     public final int size() {
         return columnMaps.size();
-    }
-
-    public static Columns Builder() {
-        return colTree;
     }
 
     public Object previous() {

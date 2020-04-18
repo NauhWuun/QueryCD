@@ -1,4 +1,4 @@
-package com.Query.Columnar.Index;
+package org.Query.Columnar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.ListIterator;
 
 public final class ColumnTreeIndex<E>
 {
-    private ListIterator<E> subTreeIterator;
+    private final ListIterator<E> subTreeIterator;
 
     public ColumnTreeIndex(List<E> lists) {
         subTreeIterator = lists.listIterator();

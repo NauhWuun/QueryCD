@@ -1,4 +1,4 @@
-package com.Query.Columnar;
+package org.Query.Columnar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

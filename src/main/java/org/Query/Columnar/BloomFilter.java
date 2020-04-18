@@ -1,4 +1,4 @@
-package com.Query.Columnar;
+package org.Query.Columnar;
 
 import java.util.BitSet;
 import java.util.Iterator;
@@ -6,8 +6,8 @@ import java.util.Random;
 
 public final class BloomFilter implements Cloneable
 {
-    private BitSet hashes;
-    private RandomInRange prng;
+    private final BitSet hashes;
+    private final RandomInRange prng;
 
     private int k;                                          // Number of hash functions
     private static final double LN2 = 0.6931471805599453;   // ln(2)
@@ -69,7 +69,7 @@ public final class BloomFilter implements Cloneable
 
     private class RandomInRange implements Iterable<RandomInRange>, Iterator<RandomInRange>
     {
-        private Random prng;
+        private final Random prng;
 
         private int max;    // Maximum value returned + 1
         private int count;  // Number of random elements to generate

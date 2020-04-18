@@ -1,10 +1,10 @@
-package com.Query.Columnar.Index;
+package org.Query.Columnar;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class SubColumnNumberIndex
 {
-    private AtomicInteger currentIndex;
+    private final AtomicInteger currentIndex;
 
     public SubColumnNumberIndex() {
         currentIndex = new AtomicInteger();

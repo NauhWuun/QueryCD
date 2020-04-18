@@ -1,4 +1,4 @@
-package com.Query.Columnar.Index;
+package org.Query.Columnar;
 
 import java.io.Serializable;
 import java.util.IdentityHashMap;
@@ -6,10 +6,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public final class SubColumnTimes implements Serializable
+public final class SubColumnTimes
 {
-    private AtomicInteger createTimeIndex, updateTimeIndex;
-    private Map<Object, TimeKValue<Object, Object>> innerData;
+    private final AtomicInteger createTimeIndex;
+    private final AtomicInteger updateTimeIndex;
+    private final Map<Object, TimeKValue<Object, Object>> innerData;
 
     public SubColumnTimes(long timeStamp) {
         createTimeIndex = new AtomicInteger();
@@ -52,11 +53,6 @@ public final class SubColumnTimes implements Serializable
         return maps;
     }
 
-    /**
-     * keep save all logs-kv-data, non-true-deleting
-     *
-     * @param timeStamp: get wanna any-timestamp
-     */
     public void removeInnerData(int timeStamp) {
 //        updateTimeIndex.addAndGet(timeStamp);
 //        innerData.remove(updateTimeIndex.get());
@@ -68,8 +64,8 @@ public final class SubColumnTimes implements Serializable
 
     public class TimeKValue<K, V> implements Serializable
     {
-        private K left;
-        private V right;
+        private final K left;
+        private final V right;
 
         public TimeKValue(K left, V right) {
             this.left = left;
