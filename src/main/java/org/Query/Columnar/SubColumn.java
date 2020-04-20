@@ -20,10 +20,8 @@ public class SubColumn
 
         childNodes = new IdentityHashMap<>(MAX_COLUMN_SIZE);
         childNodeNumbers = new TreeMap<>();
-
         nodeIndex = new SubColumnNumberIndex();
-        timeIndex = new SubColumnTimes(TimeStamp.date2Stamp(
-                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss z").format(new Date())));
+        timeIndex = new SubColumnTimes(TimeStamp.date2Stamp(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss z").format(new Date())));
     }
 
     public <K, V extends Comparable<? super V>> Map<Object, Integer> downSort(Map<K, V> map) {
@@ -86,9 +84,7 @@ public class SubColumn
                 new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss z").format(new Date())));
     }
 
-    public boolean hasChildTreeKey(final Object key) {
-        return childNodes.containsKey(key);
-    }
+    public boolean hasChildTreeKey(final Object key) { return childNodes.containsKey(key); }
 
     public boolean hasChildTreeValue(final Object value) { return childNodes.containsValue(value); }
 
@@ -108,5 +104,20 @@ public class SubColumn
 
     public int getUpdateNodeTime() {
         return timeIndex.getUpdateTime();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (! (o instanceof Columnar)) return false;
+
+        Columnar col = (Columnar) o;
+
+        return this.hashCode() == col.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return RockRand.nextInt();
     }
 }

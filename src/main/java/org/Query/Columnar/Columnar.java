@@ -21,7 +21,7 @@ public class Columnar
         columnMaps.put(newColumnName, new SubColumn(newColumnName));
     }
 
-    public void addtionColumnDatas(final String columnName, final Object key, final Object value) throws ParseException {
+    public void addtionColumnData(final String columnName, final Object key, final Object value) throws ParseException {
         if (! columnMaps.containsKey(columnName))
             return;
 
@@ -31,11 +31,11 @@ public class Columnar
             columnFilter.pushKeyIndexData(key).pushValueIndexData(value);
     }
 
-    public void delete(String columnName) {
-        if (! columnMaps.containsKey(columnName))
-            return;
-
-        columnMaps.remove(columnName);
+    @Deprecated
+    public void Remove(final String columnName) {
+//        if (! columnMaps.containsKey(columnName))
+//            return;
+//        columnMaps.remove(columnName);
     }
 
     public void lazyRemoveChildTreeData(final String columnName, final Object key) throws ParseException {
@@ -116,34 +116,11 @@ public class Columnar
         return columnIndex.previousIndex();
     }
 
-    /**
-     *
-     * @param key : Global SubTreeNode K -> Key
-     * @return
-     *      true: hasKey
-     *      false: non-key
-     */
     public boolean hasKey(Object key) {
         return columnFilter.ContainsValue(key);
     }
 
-    /**
-     *
-     * @param value : Global SubTreeNode V -> value
-     * @return
-     *      true: hasValue
-     *      false: non-value
-     */
     public boolean hasValue(Object value) {
         return columnFilter.ContainsValue(value);
-    }
-
-    /**
-     *
-     * @return
-     *      return meta index object to ...
-     */
-    public Globalndex<Object, Object> getMetaIndex() {
-        return columnFilter;
     }
 }

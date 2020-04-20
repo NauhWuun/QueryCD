@@ -62,7 +62,7 @@ public final class SubColumnTimes
         return this.innerData;
     }
 
-    public class TimeKValue<K, V> implements Serializable
+    public class TimeKValue<K, V>
     {
         private final K left;
         private final V right;
