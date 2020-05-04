@@ -1,27 +1,25 @@
 package org.Query.Columnar;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class SubColumn
 {
-    private final Map<Object, Object> childNodes;
+    private final Map<Object, Object[]> childNodes;
     private final Map<Object, Integer> childNodeNumbers;
 
     private final String subTreeName;
     private final SubColumnNumberIndex nodeIndex;
     private final SubColumnTimes timeIndex;
 
-    private final int MAX_COLUMN_SIZE = 0x124f8; /* Max One Column Size is 150000 */
-
-    public SubColumn(final String subTreeName) throws ParseException {
+    public SubColumn(final String subTreeName) {
         this.subTreeName = subTreeName;
 
-        childNodes = new IdentityHashMap<>(MAX_COLUMN_SIZE);
-        childNodeNumbers = new TreeMap<>();
+        childNodes = new IdentityHashMap<>();
+        childNodeNumbers = new WeakHashMap<>();
         nodeIndex = new SubColumnNumberIndex();
-        timeIndex = new SubColumnTimes(TimeStamp.date2Stamp(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss z").format(new Date())));
+        timeIndex = new SubColumnTimes(TimeStamp.date2Stamp(
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss z").format(new Date())));
     }
 
     public <K, V extends Comparable<? super V>> Map<Object, Integer> downSort(Map<K, V> map) {
@@ -48,11 +46,8 @@ public class SubColumn
         return result;
     }
 
-    public SubColumn addChildTreeData(final Object key, Object value) throws ParseException {
-        if (nodeIndex.moveOn() >= MAX_COLUMN_SIZE)
-            throw new IllegalArgumentException("out of max-one-column size...");
-
-        childNodes.put(key, (value == null) ? (byte) 0 : value);
+    public void addChildTreeData(final Object key, Object... value) {
+        childNodes.put(key, value);
         childNodeNumbers.put(key, nodeIndex.moveOn());
         timeIndex.setUpdateTime(
                 (int) TimeStamp.date2Stamp(
@@ -60,11 +55,9 @@ public class SubColumn
                 key,
                 value
         );
-
-        return this;
     }
 
-    public void lazyChildTreeData(final Object key) throws ParseException {
+    public void lazyChildTreeData(final Object key) {
         timeIndex.setUpdateTime(
                 (int) TimeStamp.date2Stamp(
                 new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss z").format(new Date())),
@@ -73,20 +66,20 @@ public class SubColumn
         );
     }
 
-    public void removeChildTreeData(final Object key) throws ParseException {
+    public void removeChildTreeData(final Object key) {
         childNodes.remove(key);
         childNodeNumbers.remove(key);
 
         nodeIndex.moveOff();
-
-        // We don't think true deleting data, the old data has snap-shot effect with current data
         timeIndex.removeInnerData((int) TimeStamp.date2Stamp(
                 new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss z").format(new Date())));
     }
 
-    public boolean hasChildTreeKey(final Object key) { return childNodes.containsKey(key); }
+    public static SubColumn Builder(final String subTreeName) {
+        return new SubColumn(subTreeName);
+    }
 
-    public boolean hasChildTreeValue(final Object value) { return childNodes.containsValue(value); }
+    public boolean hasChildTreeKey(Object key) { return childNodes.containsKey(key); }
 
     public final String getCurrentSubTreeName() {
         return subTreeName;
@@ -112,7 +105,6 @@ public class SubColumn
         if (! (o instanceof Columnar)) return false;
 
         Columnar col = (Columnar) o;
-
         return this.hashCode() == col.hashCode();
     }
 

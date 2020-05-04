@@ -25,6 +25,10 @@ public final class Globalndex<K, V>
         return this;
     }
 
+    public static Globalndex Builder() {
+        return new Globalndex();
+    }
+
     public boolean ContainsKey(Object o) {
         return keyIndex.Contains(o);
     }

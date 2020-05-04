@@ -8,47 +8,29 @@ import java.util.stream.Collectors;
 public class Columnar
 {
     private static final Map<String, SubColumn> columnMaps = new ConcurrentHashMap<>();
-    private static final ColumnTreeIndex<String> columnIndex = new ColumnTreeIndex<>(getKeys());
-
     private final Globalndex<Object, Object> columnFilter;
 
-    public Columnar() { columnFilter = new Globalndex<>(); }
+    public Columnar() { columnFilter = Globalndex.Builder(); }
 
     public void createColumnFamily(final String newColumnName) throws ParseException {
         if (columnMaps.containsKey(newColumnName))
             return;
 
-        columnMaps.put(newColumnName, new SubColumn(newColumnName));
+        columnMaps.put(newColumnName, SubColumn.Builder(newColumnName));
     }
 
-    public void addtionColumnData(final String columnName, final Object key, final Object value) throws ParseException {
-        if (! columnMaps.containsKey(columnName))
-            return;
-
-        columnMaps.get(columnName).addChildTreeData(key, value);
-
-        if (! columnFilter.ContainsKey(key) && ! columnFilter.ContainsValue(value))
+    public void addtionColumnData(final String columnName, Object key, Object... value) throws ParseException {
+        if (! columnMaps.containsKey(columnName)) {
             columnFilter.pushKeyIndexData(key).pushValueIndexData(value);
+            columnMaps.get(columnName).addChildTreeData(key, value);
+        }
     }
 
-    @Deprecated
-    public void Remove(final String columnName) {
-//        if (! columnMaps.containsKey(columnName))
-//            return;
-//        columnMaps.remove(columnName);
-    }
-
-    public void lazyRemoveChildTreeData(final String columnName, final Object key) throws ParseException {
-        if (! columnMaps.containsKey(columnName))
-            return;
-
+    public void lazyRemoveChildTreeData(final String columnName, Object key) throws ParseException {
         columnMaps.get(columnName).lazyChildTreeData(key);
     }
 
-    public void removeColumnData(final String columnName, final Object key) throws ParseException {
-        if (! columnMaps.containsKey(columnName))
-            return;
-
+    public void removeColumnData(final String columnName, Object key) throws ParseException {
         columnMaps.get(columnName).removeChildTreeData(key);
     }
 
@@ -93,27 +75,27 @@ public class Columnar
     }
 
     public Object previous() {
-        return columnIndex.previous();
+        return getKeys().listIterator().previous();
     }
 
     public Object next() {
-        return columnIndex.next();
+        return getKeys().listIterator().next();
     }
 
     public boolean hasNext() {
-        return columnIndex.hasNext();
+        return getKeys().listIterator().hasNext();
     }
 
     public boolean hasPrevious() {
-        return columnIndex.hasPrevious();
+        return getKeys().listIterator().hasPrevious();
     }
 
     public int nextIndex() {
-        return columnIndex.nextIndex();
+        return getKeys().listIterator().nextIndex();
     }
 
     public int previousIndex() {
-        return columnIndex.previousIndex();
+        return getKeys().listIterator().previousIndex();
     }
 
     public boolean hasKey(Object key) {

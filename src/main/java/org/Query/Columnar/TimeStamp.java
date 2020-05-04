@@ -7,9 +7,16 @@ import java.util.TimeZone;
 
 public final class TimeStamp
 {
-	public static long date2Stamp(String strings) throws ParseException {
+	public static long date2Stamp(String strings) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss z");
-		Date date = sdf.parse(strings);
+		Date date = null;
+		try {
+			date = sdf.parse(strings);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		assert date != null;
 		return (date.getTime()) / 1000L;
 	}
 
