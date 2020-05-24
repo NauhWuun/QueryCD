@@ -12,9 +12,9 @@
 * limitations under the License. 
 */
 package org.Query.Columnar.Mapper;
-import io.mappedbus.MappedBusConstants.StatusFlag;
-import io.mappedbus.MappedBusConstants.Length;
-import io.mappedbus.MappedBusConstants.Structure;
+import org.Query.Columnar.Mapper.MappedBusConstants.StatusFlag;
+import org.Query.Columnar.Mapper.MappedBusConstants.Length;
+import org.Query.Columnar.Mapper.MappedBusConstants.Structure;
 
 import java.io.EOFException;
 import java.io.IOException;
