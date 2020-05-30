@@ -5,18 +5,11 @@ import java.util.Objects;
 public class Columns<T>
 {
     private final String columnName;
-    private final int type;
-    private T val;
+    private final T val;
 
-    public Columns(String columnName, T val, int type) {
+    public Columns(String columnName, T val) {
         this.columnName = columnName;
         this.val = val;
-        this.type = type;
-    }
-
-    public Columns(String columnName, int type) {
-        this.columnName = columnName;
-        this.type = type;
     }
 
     public String getColumnName() {
@@ -27,10 +20,6 @@ public class Columns<T>
         return val;
     }
 
-    public int getType() {
-        return type;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o || ! (o instanceof Columns)) {
@@ -38,7 +27,7 @@ public class Columns<T>
         }
 
         Columns<?> columns = (Columns<?>) o;
-        if (type != columns.type || ! columnName.equals(columns.columnName)) {
+        if (! columnName.equals(columns.columnName)) {
             return false;
         }
 
@@ -49,7 +38,7 @@ public class Columns<T>
     public int hashCode() {
         int result = columnName.hashCode();
         result = 31 * result + (val != null ? val.hashCode() : 0);
-        result = 31 * result + type;
+        result = 31 * result;
         return result;
     }
 
@@ -58,7 +47,6 @@ public class Columns<T>
         return "Column {"
                 + "columnName='" + columnName + '\''
                 + ", val=" + val
-                + ", sqlType=" + type
                 + '}';
     }
 }
