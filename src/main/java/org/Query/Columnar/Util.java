@@ -17,7 +17,7 @@ public class Util
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException("Could not get TypeName ", e);
 		}
-		throw new RuntimeException("Unknown sqlType " + type);
+		throw new RuntimeException("Unknown Type " + type);
 	}
 
 	public static Class getType(int type) {

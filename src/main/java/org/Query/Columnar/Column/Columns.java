@@ -26,10 +26,6 @@ public class Columns<T>
     public void add(T val) {
         if (val != null)
             vals.add(val);
-
-        if (vals.size() + 1 >= MAX_VALUE / 4) {
-            
-        }
     }
 
     public String getColumnName() {
