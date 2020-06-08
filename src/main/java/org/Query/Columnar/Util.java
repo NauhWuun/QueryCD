@@ -1,10 +1,8 @@
 package org.Query.Columnar;
 
 import java.lang.reflect.Field;
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.List;
 
 public class Util
 {
@@ -46,14 +44,30 @@ public class Util
 			case Types.DOUBLE:
 			case Types.FLOAT:
 				return Double.class;
-			case Types.DATE:
-				return Date.class;
-			case Types.TIME:
-				return Time.class;
-			case Types.TIMESTAMP:
-				return Timestamp.class;
 			default:
 				throw new RuntimeException("We do not support tables with Type: " + getTypeName(type));
+		}
+	}
+
+	public static void getClass(Class type, List<Object> objs) {
+		if (type.equals(String.class)) {
+			
+		}
+			
+		if (type.equals(byte[].class)) {
+
+		}
+			
+		if (type.equals(Boolean.class)) {
+
+		}
+			
+		if (type.equals(Integer.class) || type.equals(Long.class) || type.equals(Short.class)) {
+
+		}	
+
+		if (type.equals(Float.class) || type.equals(Double.class)) {
+
 		}
 	}
 

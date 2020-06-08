@@ -96,7 +96,7 @@ public class BloomFilter implements Cloneable
             i++;
             value = prng.nextInt() % max;
 
-            if (value<0)
+            if (value < 0)
                 value = -value;
 
             return this;
@@ -105,45 +105,5 @@ public class BloomFilter implements Cloneable
         public boolean hasNext() {
             return i < count;
         }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
     }
 }
-
-/**
- * Example:
- *
- * // Create a new bloom filter optimized for containing 100 elements and using 1024 bits of memory
- * BloomFilter f = new BloomFilter(100, 1024);
- *
- * // Add elements to the filter
- * // it uses Object.hashCode() internally, so you can add objects of any type
- * f.add("hello");
- *
- * // Check if an element is in the filter
- * f.contains("hello");             // true
- * f.contains("hello, world!");     // false
- *
- *
- * Testing:
- *
- *  a bloom filter containing n=10000000 elements in a bit array of m=80000000 bits (=9.5Mib)
- *
- *  Testing correctness. Creating a filter, a set, and filling them...
- *  Elements incorrectly found to be inside:   215013/10000000 (2.15%) done.
- *
- *  Testing insertion speed...
- *  Inserted 10000000 elements in 3445388006 ns.
- *  Insertion speed: 2.90243e+06 elements/second
- *
- *  Testing query speed...
- *  Queried 10000000 elements in 1537504033 ns.
- *  Query speed: 6.50405e+06 elements/second
- *
- *  The implementation is correct: the error rate is p=exp(-ln(2)^2 * m/n)
- *  It is quite fast
- *  It can insert around 2 million elements per second.
- *  It can query around 6 million elements per second.
- */

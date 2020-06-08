@@ -1,23 +1,47 @@
 package org.Query.Columnar.Column;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.roaringbitmap.RoaringBitmap;
 
 public class Columns<T>
 {
     private final String columnName;
-    private final T val;
+    
+    private static final RoaringBitmap rb = new RoaringBitmap();
+    private static final int MAX_VALUE = Integer.MAX_VALUE / 8;
+    private static final double factor = 0.77;
+
+    private static final ArrayList<Object> vals = new ArrayList<Object>(MAX_VALUE);
 
     public Columns(String columnName, T val) {
+        if (vals.size() * factor == MAX_VALUE)
+            throw new IllegalArgumentException("the size of the array is larger");
+
         this.columnName = columnName;
-        this.val = val;
+        this.add(val);
+    }
+
+    public void add(T val) {
+        if (val != null)
+            vals.add(val);
+
+        if (vals.size() + 1 >= MAX_VALUE / 4) {
+            
+        }
     }
 
     public String getColumnName() {
         return columnName;
     }
 
-    public T getVal() {
-        return val;
+    public static List<Object> getVals() {
+        return vals;
+    }
+
+    public boolean getVal(T val) {
+        return vals.contains(val);
     }
 
     @Override
@@ -31,13 +55,13 @@ public class Columns<T>
             return false;
         }
 
-        return Objects.equals(val, columns.val);
+        return true;
     }
 
     @Override
     public int hashCode() {
         int result = columnName.hashCode();
-        result = 31 * result + (val != null ? val.hashCode() : 0);
+        result = 31 * result + (vals != null ? vals.hashCode() : 0x81010101);
         result = 31 * result;
         return result;
     }
@@ -46,7 +70,7 @@ public class Columns<T>
     public String toString() {
         return "Column {"
                 + "columnName='" + columnName + '\''
-                + ", val=" + val
+                + ", vals=" + vals
                 + '}';
     }
 }
