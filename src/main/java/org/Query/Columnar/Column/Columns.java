@@ -1,43 +1,45 @@
 package org.Query.Columnar.Column;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.roaringbitmap.RoaringBitmap;
-
-public class Columns<T>
+public class Columns<T extends Serializable>
 {
     private final String columnName;
     
-    private static final RoaringBitmap rb = new RoaringBitmap();
-    private static final int MAX_VALUE = Integer.MAX_VALUE / 8;
-    private static final double factor = 0.77;
+    private final int MAX_VALUE = Integer.MAX_VALUE / 8;
+    private final double factor = 0.77;
 
-    private static final ArrayList<Object> vals = new ArrayList<Object>(MAX_VALUE);
+    private final ArrayList<T> vals = new ArrayList<T>();
+
+    public Columns(String columnName) {
+        this.columnName = columnName;
+    }
 
     public Columns(String columnName, T val) {
-        if (vals.size() * factor == MAX_VALUE)
-            throw new IllegalArgumentException("the size of the array is larger");
-
         this.columnName = columnName;
         this.add(val);
     }
 
     public void add(T val) {
-        if (val != null)
-            vals.add(val);
+        if (vals.size() * factor >= MAX_VALUE) {
+            
+        }
+
+        vals.add(val);
     }
 
     public String getColumnName() {
         return columnName;
     }
 
-    public static List<Object> getVals() {
+    public List<T> getVals() {
         return vals;
     }
 
-    public boolean getVal(T val) {
-        return vals.contains(val);
+    public void allClear() {
+        vals.clear();
     }
 
     @Override

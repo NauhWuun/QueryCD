@@ -49,28 +49,6 @@ public class Util
 		}
 	}
 
-	public static void getClass(Class type, List<Object> objs) {
-		if (type.equals(String.class)) {
-			
-		}
-			
-		if (type.equals(byte[].class)) {
-
-		}
-			
-		if (type.equals(Boolean.class)) {
-
-		}
-			
-		if (type.equals(Integer.class) || type.equals(Long.class) || type.equals(Short.class)) {
-
-		}	
-
-		if (type.equals(Float.class) || type.equals(Double.class)) {
-
-		}
-	}
-
 	public static int SDBMHash(byte[] str) {
 		int hash = 0;
 		for (byte b : str) {

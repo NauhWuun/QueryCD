@@ -43,6 +43,14 @@ public class BloomFilter implements Cloneable
         return true;
     }
 
+    public byte[] serialize() {
+        return hashes.toByteArray();
+    }
+
+    public void deserialize(byte[] bytes) {
+        hashes = BitSet.valueOf(bytes);
+    }
+
     public void clear() {
         hashes.clear();
     }
