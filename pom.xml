@@ -25,35 +25,6 @@
             <version>3.5.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.60</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.60</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.i2p.crypto</groupId>
-            <artifactId>eddsa</artifactId>
-            <version>0.3.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.luben</groupId>
-            <artifactId>zstd-jni</artifactId>
-            <version>1.4.4-11</version>
-        </dependency>
-
-        <dependency>
-            <groupId>me.lemire.integercompression</groupId>
-            <artifactId>JavaFastPFOR</artifactId>
-            <version>0.1.12</version>
-        </dependency>
-
     </dependencies>
 
 </project>

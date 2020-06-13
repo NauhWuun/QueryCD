@@ -77,10 +77,10 @@ public class BloomFilter implements Cloneable
 
     private class RandomInRange implements Iterable<RandomInRange>, Iterator<RandomInRange>
     {
-        private Random prng;
+        private final Random prng;
 
-        private int max;    // Maximum value returned + 1
-        private int count;  // Number of random elements to generate
+        private final int max;    // Maximum value returned + 1
+        private final int count;  // Number of random elements to generate
         private int i = 0;  // Number of elements generated
 
         public int value;   // The current value

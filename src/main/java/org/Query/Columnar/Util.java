@@ -29,16 +29,16 @@ public class Util
 			case Types.BINARY:
 			case Types.VARBINARY:
 			case Types.LONGVARBINARY:
+			case Types.BLOB:
 				return byte[].class;
 			case Types.BIT:
+			case Types.BOOLEAN:
 				return Boolean.class;
-			case Types.TINYINT:
-			case Types.SMALLINT:
-				return Short.class;
 			case Types.INTEGER:
+			case Types.SMALLINT:
+			case Types.DECIMAL:
+			case Types.NUMERIC:
 				return Integer.class;
-			case Types.BIGINT:
-				return Long.class;
 			case Types.REAL:
 				return Float.class;
 			case Types.DOUBLE:
@@ -49,11 +49,13 @@ public class Util
 		}
 	}
 
-	public static int SDBMHash(byte[] str) {
+	public static int SDBMHash(String str) {
 		int hash = 0;
-		for (byte b : str) {
-			hash = b + (hash << 6) + (hash << 16) - hash;
+
+		for (int i = 0; i < str.length(); i++) {
+			hash = str.charAt(i) + (hash << 6) + (hash << 16) - hash;
 		}
+
 		return (hash & 0x7FFFFFFF);
 	}
 }
