@@ -1,2 +1,2 @@
 # Column4J
-  Cloumnar Store for java
+  Pure Cloumnar Store for java
