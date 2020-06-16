@@ -16,9 +16,11 @@ public class Columnar
 	private static final String DB_FILENAME = "./query.cd";
 
 	private final String name;
+	
 	private final Map<String, Columns> columns;
 	private final Map<String, List<IndexPart>> indexes;
 	private final AtomicLong index = new AtomicLong();
+	private final ArrayList<TableDefine> tables;
 
 	private Path db;
 
@@ -29,6 +31,13 @@ public class Columnar
 
 		valueFilter = new BloomFilter(Integer.MAX_VALUE / 8, Integer.MAX_VALUE / 4);
 	}
+	
+	private ArrayList<tables> columns() {
+        	if (this.tables == null) {
+            		this.tables = new ArrayList<tables>();
+        	}
+        	return this.tables;
+    	}
 
 	private void createDatabase() {
 		db = Paths.get(DB_FILENAME);
@@ -85,7 +94,13 @@ public class Columnar
 		String primary = getPrimaryIndex(this.indexes);
 		Map<String, IndexColumn> defs = createIndexDefMap(primary);
 
-		return new TableDefine(name, columns, defs, defs.get(primary));
+		TableDefine td = new TableDefine(name, columns, defs, defs.get(primary));
+		columns().add(td);
+		return td;
+	}
+	
+	public List<TableDefine> getColumns() {
+	    return tables;
 	}
 
 	private Map<String, IndexColumn> createIndexDefMap(String primary) {
